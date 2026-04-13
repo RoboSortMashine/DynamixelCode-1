@@ -150,7 +150,7 @@ struct Servo_D {
 };
 // БЫЛО: Servo_D serv();
 //Пример setup
-Servo_D* serv = nullptr;
+Servo_D* serv = nullptr; //создание указателя на сервопривод 
 void setup() {
   DEBUG_SERIAL.begin(115200);
   DEBUG_SERIAL.println("Wait press btn1 (auto mode) or btn (manual control)...");
@@ -159,14 +159,14 @@ void setup() {
   dxl.setPortProtocolVersion(DXL_PROTOCOL_VERSION);
   serialPrintTimer.setInterval(500);
   serialPrintTimer.reset();
-  TIMER.setInterval(5000); 
+  TIMER.setInterval(5000);  //запуск таймера 
   TIMER.reset();
-  int cnt = 2;
-  int id[2] = {1, 2};
-  int pos[2] = {0, 0};
-  serv = new Servo_D(dxl, cnt, pos, id);
-  serv->check_serv();
-  serv->init();
+  int cnt = 2; //кол-во сервоприводов 
+  int id[2] = {1, 2}; //id i-го сервопривода
+  int pos[2] = {0, 0}; //начальные позиции сервоприводов
+  serv = new Servo_D(dxl, cnt, pos, id); //сохдание экземпляра класса 
+  serv->check_serv(); //проверка сервоприводов 
+  serv->init(); //инициализация сервопривода 
 }
 bool Stop_Program = false;
 void loop() {
