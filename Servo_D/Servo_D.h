@@ -1,5 +1,6 @@
 #ifndef SERVO_D_H
-#define SERVO_D_H 
+#define SERVO_D_H
+
 struct Servo_D {
   Dynamixel2Arduino* d_dxl;   //Указатель на экземпляр динамикселя
   int* mode; //режим динамикселя
@@ -62,7 +63,7 @@ struct Servo_D {
       d_dxl->torqueOff(id);
       bool setDinamixelOperationMode = d_dxl->setOperatingMode(id, OP_POSITION);
       if (!setDinamixelOperationMode && serialPrintTimer.isReady()) {
-        DEBUG_SERIAL.println("Dynamixel with ID " + String(id) + " mode not set!");
+       // DEBUG_SERIAL.println("Dynamixel with ID " + String(id) + " mode not set!");
       }
       d_dxl->torqueOn(id);
 
@@ -94,7 +95,7 @@ struct Servo_D {
     for(int i = 0; i < JOINT_S; i++){
       int id = id_s[i]; 
       if(target[i] == -1) continue; 
-      if(abs(target[i] - dxl.getPresentPosition(id)) <= eps){
+      if(abs(target[i] - d_dxl->getPresentPosition(id)) <= eps){
         target[i] = -1;
         d_dxl->setGoalVelocity(id, 0);
         endsession[session] = true;
@@ -102,7 +103,7 @@ struct Servo_D {
         continue;
       }
       if(endsession[session]) continue;
-      long double start = dxl.getPresentPosition(id); 
+      long double start = d_dxl->getPresentPosition(id); 
       if(mode[id] == 0) next_mode(id); 
       long double targ = todeg(target[i]); 
       if(start <= targ){
@@ -116,3 +117,4 @@ struct Servo_D {
     }
   }
 };
+#endif 
