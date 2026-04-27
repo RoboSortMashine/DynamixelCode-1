@@ -41,9 +41,13 @@ struct Servo_D {
   //бесконечное вращение динамикселя. Передается скорость, id, направление вращения
   void inf_rotation(float speed, int id, bool dir = 0) {
     if (mode[id] == 0) next_mode(id);
+    if (speed == 0) {
+        d_dxl->setGoalVelocity(id, 0);
+        return;
+    }
     if (dir == 1) speed += 1023;
     d_dxl->setGoalVelocity(id, speed);
-  }
+}
   //проверка на подключение сервоприводов
   void check_serv() {
     for (int i = 0; i < JOINT_S; i++) {
