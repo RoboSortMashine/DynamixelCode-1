@@ -84,7 +84,8 @@ struct Servo_D {
     Serial.printf("succeced init!");
   }
   //Вращения сервоприводов. Передается массив нужных позиций в градусах для каждого сервопривода, погрешность, скорость
-  void rotate(long double* target, long double eps, int speed, int session) {
+  void rotate(long double* target, long double eps, int speed) {
+    //для i-го сервопривода target[i] позиция 
     for (int i = 0; i < JOINT_S; i++) {
       int id = id_s[i];
       if (target[i] == -1) continue;
