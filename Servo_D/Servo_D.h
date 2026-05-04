@@ -23,7 +23,7 @@ struct Servo_D {
     return value * 1024.0 / 300.0;
   }
   void update_position(){
-    for(int i = 0; i < id_s.size(); i++){
+    for(int i = 0; i < JOINT_S; i++){
       position[id_s[i]] = d_dxl->getPresentPosition(id_s[i]);
     }
   }
@@ -98,7 +98,7 @@ struct Servo_D {
       }
       if (mode[id] != 0) next_mode(id);   
       d_dxl->setGoalVelocity(id, speed);          
-      d_dxl->setGoalPosition(id, targ);      
+      d_dxl->setGoalPosition(id, (int)targ);      
       position[id] = d_dxl->getPresentPosition(id);
     }
   }
@@ -130,6 +130,13 @@ struct Servo_D {
     }
   }
   */
+  //деструктор
+  ~Servo_D() {
+    delete[] mode;
+    delete[] endsession;
+    delete[] position;
+    delete[] id_s;
+  }
     
 };
 #endif 
