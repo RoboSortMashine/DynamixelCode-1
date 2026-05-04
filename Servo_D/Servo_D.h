@@ -4,7 +4,7 @@
 struct Servo_D {
   Dynamixel2Arduino* d_dxl;   //Указатель на экземпляр динамикселя
   int* mode; //режим динамикселя
-  int* position; //начальная позиция динамикселя
+  long double* position; //начальная позиция динамикселя
   bool* endsession; //хз
   int* id_s; //id каждого подключенного сервопривода
   int JOINT_S; //Кол-во испульзуемых динамикселей
@@ -22,17 +22,23 @@ struct Servo_D {
   long double todeg(long double value) {
     return value * 1024.0 / 300.0;
   }
+  void update_position(){
+    for(int i = 0; i < id_s.size(); i++){
+      position[id_s[i]] = d_dxl->getPresentPosition(id_s[i]);
+    }
+  }
   //конструктор класса динамикселя
-  Servo_D(Dynamixel2Arduino& dx, int J = 0, int* pos = nullptr, int* id = nullptr, int sz = 100) { //передается ссылка на экземпляр класса Dynamixel2Arduino, кол-во динамикселей, информация о режиме вращения для каждого динамикселя, массив id динамикселй
+  Servo_D(Dynamixel2Arduino& dx, int J = 0, long double* pos = nullptr, int* id = nullptr, int sz = 100) { //передается ссылка на экземпляр класса Dynamixel2Arduino, кол-во динамикселей, информация о режиме вращения для каждого динамикселя, массив id динамикселй
     JOINT_S = J;
     mode = new int[256];
     endsession = new bool[sz];
-    position = new int[J];
+    position = new long double[300];
     id_s = new int[J];
     d_dxl = &dx;   
     for (int i = 0; i < JOINT_S; i++) {
-      position[i] = pos[i];
+      //position[i] = pos[i];
       id_s[i] = id[i];
+      position[id_s[i]] = pos[i];
     }
     for (int i = 0; i < 256; i++) {
       mode[i] = 0;
@@ -43,6 +49,7 @@ struct Servo_D {
     if (mode[id] == 0) next_mode(id);
     if (speed == 0) {
         d_dxl->setGoalVelocity(id, 0);
+        position[id] = d_dxl->getPresentPosition(id);
         return;
     }
     if (dir == 1) speed += 1023;
@@ -91,11 +98,13 @@ struct Servo_D {
       }
       if (mode[id] != 0) next_mode(id);   
       d_dxl->setGoalVelocity(id, speed);          
-      d_dxl->setGoalPosition(id, (int)targ);      
+      d_dxl->setGoalPosition(id, targ);      
+      position[id] = d_dxl->getPresentPosition(id);
     }
   }
   //понятия не имею как работает. Вряд ли работает. Не использовать:)
-    void unsafe_rotate(long double* target, long double eps,  int speed, int session){
+  /*
+  void unsafe_rotate(long double* target, long double eps,  int speed, int session){
     for(int i = 0; i < JOINT_S; i++){
       int id = id_s[i]; 
       if(target[i] == -1) continue; 
@@ -120,5 +129,7 @@ struct Servo_D {
       }
     }
   }
+  */
+    
 };
 #endif 
